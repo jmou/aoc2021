@@ -3,7 +3,7 @@
 main = do
   -- :: type ascription is necessary to disambiguate read which parses a String
   -- . is function composition (f o g)
-  -- <$> is fmap; it maps inside the functor (IO)
+  -- <$> is fmap; it maps inside the functor (IO); it is a generalization of map
   -- <- is bind inside do-block (?)
   nums <- map read . lines <$> readFile "input" :: IO [Int]
   print $ countIncreases nums

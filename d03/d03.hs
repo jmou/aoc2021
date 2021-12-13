@@ -40,6 +40,7 @@ mode = head . maximumBy (comparing tuple) . group . sort
 -- 2
 toInt :: [Bool] -> Int
 -- foldl' is a strict (non-lazy) foldl for efficient tail call optimization
+-- \ is lambda (anonymous function)
 toInt = foldl' (\x y -> 2 * x + bit y) 0
   where
     bit True = 1
@@ -49,23 +50,26 @@ toInt = foldl' (\x y -> 2 * x + bit y) 0
 -- [True]
 -- >>> winnow mode . map parse $ ["10", "11", "01", "01"]
 -- [True,True]
--- ambiguous results are not handled
--- >>> winnow mode [[True], [True], [False]]
--- Prelude.head: empty list
 -- >>> winnow mode . map parse $ ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"]
 -- [True,False,True,True,True]
 -- >>> winnow (not . mode) . map parse $ ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"]
 -- [False,True,False,True,False]
+--
+-- ambiguous results are not handled
+-- >>> winnow mode [[True], [True], [False]]
+-- Prelude.head: empty list
 winnow :: ([Bool] -> Bool) -> [[Bool]] -> [Bool]
 winnow _ [] = error "No final value"
 winnow _ [xs] = xs
 -- construct from first bit and further winnowed bits
-winnow criteria xs = first : winnow criteria (map tail filtered)
+winnow criteria xs = first : winnow criteria filtered
   where
     -- most common first bit
     first = criteria . map head $ xs
     -- filter to values with that first bit
-    filtered = filter (\ys -> head ys == first) xs
+    -- >>= is flatmap
+    -- [expr | cond] is list comprehension
+    filtered = xs >>= \(y : ys) -> [ys | y == first]
 
 -- declaration style with where
 part2 parsed =

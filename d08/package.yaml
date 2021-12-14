@@ -1,0 +1,6 @@
+dependencies:
+- base
+- containers
+
+executable:
+  main: d08.hs

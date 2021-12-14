@@ -1,0 +1,6 @@
+dependencies:
+- base
+- split
+
+executable:
+  main: d06.hs

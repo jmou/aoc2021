@@ -49,6 +49,8 @@ interpolateAxisAligned (Vent (Coord (x1, y1)) (Coord (x2, y2)))
   | x1 == x2 = (\y -> Coord (x1, y)) <$> interpolate y1 y2
     -- higher order functions
   | y1 == y2 = flip (curry Coord) y1 <$> interpolate x1 x2
+  -- list comprehension
+  -- | y1 == y2 = [Coord (x, y1) | x <- interpolate x1 x2]
   | otherwise = []
 
 interpolate8Way :: Vent -> [Coord]

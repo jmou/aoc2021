@@ -1,0 +1,5 @@
+resolver: ghc-8.10.5
+packages:
+- .
+extra-deps:
+- split-0.2.3.4@sha256:a6df9c3e806ee7cb50bc980a183fc1156f35022a39430dabac0bf9456fe18a4b

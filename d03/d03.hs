@@ -14,6 +14,7 @@ part1 parsed =
    in gamma * epsilon
 
 parse :: [Char] -> [Bool]
+-- or just: parse = map (== '1')
 parse =
   map parseBit
   where

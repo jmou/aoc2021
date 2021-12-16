@@ -1,0 +1,6 @@
+dependencies:
+- base
+- containers
+
+executable:
+  main: d12.hs

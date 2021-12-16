@@ -45,6 +45,7 @@ search recrossings system = search' system [] ["start"] recrossings
     search' :: System -> Path -> [Cave] -> Int -> [Path]
     search' _ _ [] _ = [] -- no next caves
     search' _ path@("end" : _) _ _ = [path] -- reached the end!
+    -- could make better use of higher-order functions like concatMap and filter
     search' system path (next : others) recrossings = nextPaths ++ othersPaths
       where
         searchNext = search' system (next : path) (fromJust $ M.lookup next system)

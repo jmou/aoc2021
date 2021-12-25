@@ -1,0 +1,7 @@
+dependencies:
+- base
+- text
+- vector
+
+executable:
+  main: d15.hs

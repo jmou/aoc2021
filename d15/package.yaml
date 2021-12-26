@@ -1,5 +1,7 @@
 dependencies:
 - base
+- containers
+- psqueues
 - text
 - vector
 

@@ -1,17 +1,18 @@
 import Data.Char (digitToInt, intToDigit)
+import Data.Foldable (foldl')
+import qualified Data.HashPSQ as PQ
+import qualified Data.Map.Strict as M
+import qualified Data.Set as S
 import qualified Data.Text as T
-import qualified Data.Vector as V
-import Debug.Trace (trace)
+import qualified Data.Vector.Unboxed as V
 
 sample = "1163751742\n1381373672\n2136511328\n3694931569\n7463417111\n1319128137\n1359912421\n3125421639\n1293138521\n2311944581"
 
-(!*!) = V.unsafeIndex -- V.(!) is not imported
+data Grid = Grid {cells :: V.Vector Int, width :: Int} deriving (Show)
 
-data Grid a = Grid {cells :: V.Vector a, width :: Int} deriving (Show)
+height grid = (V.length . cells) grid `div` width grid
 
-height grid = (length . cells) grid `div` width grid
-
-grid ! (r, c) = cells grid !*! (r * width grid + c)
+grid ! (r, c) = cells grid V.! (r * width grid + c)
 
 grid !!! (r, c) = manhattanWrap $ grid ! (r', c')
   where
@@ -31,21 +32,25 @@ parse input = Grid (V.fromList . fmap digitToInt . concat $ inputLines) (length 
   where
     inputLines = lines input
 
--- FIXME this appears to be a buggy implementation of Dijkstra's algorithm. It looks like we need to consider neighbors to the right and below also
 -- >>> shortest 1 $ parse sample
 -- 40
 -- >>> shortest 5 $ parse sample
 -- 315
-shortest scale rm = V.last . cells $ dp
+shortest :: Int -> Grid -> Int
+shortest scale rm = dijkstra M.empty S.empty (PQ.singleton (0, 0) 0 ())
   where
-    w = scale * width rm
-    dp = Grid (V.fromList [shortest' (r, c) | r <- [0 .. scale * height rm - 1], c <- [0 .. w - 1]]) w
-    shortest' (0, 0) = 0
-    shortest' p = rm !!! p + minimum ((dp !) <$> prev p)
+    cMax = scale * width rm - 1
+    rMax = scale * height rm - 1
+    dijkstra dists visited frontier = if (r, c) == (rMax, cMax) then cost else dijkstra dists' visited' frontier''
       where
-        prev (0, c) = [(0, c - 1)]
-        prev (r, 0) = [(r - 1, 0)]
-        prev (r, c) = [(r, c - 1), (r - 1, c)]
+        Just ((r, c), cost, _, frontier') = PQ.minView frontier
+        dists' = M.insertWith min (r, c) cost dists
+        visited' = S.insert (r, c) visited
+        neighbors = filter bounds [(r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)]
+        bounds p'@(r', c') = S.notMember p' visited' && 0 <= r' && r' <= rMax && 0 <= c' && c' <= cMax
+        frontier'' = foldl' (\q p -> snd $ PQ.alter (update (cost + rm !!! p)) p q) frontier' neighbors
+        update cost' Nothing = ((), Just (cost', ()))
+        update cost' (Just (p, v)) = ((), Just (min cost' p, v))
 
 main = do
   parsed <- parse <$> readFile "input"

@@ -1,0 +1,20 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           d16
+version:        0.0.0
+build-type:     Simple
+
+executable d16
+  main-is: d16.hs
+  other-modules:
+      Paths_d16
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.11 && <10
+    , bytestring
+    , rio >=0.1.12.0
+  default-language: Haskell2010

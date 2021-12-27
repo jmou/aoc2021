@@ -1,0 +1,16 @@
+dependencies:
+- base >= 4.11 && < 10
+- bytestring
+- rio >= 0.1.12.0
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wpartial-fields
+- -Wredundant-constraints
+
+executable:
+  main: d16.hs
